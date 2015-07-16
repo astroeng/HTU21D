@@ -155,30 +155,20 @@ void HTU21D::run()
 
 int HTU21D::getTemperature()
 {
-  double value = 0;
-  
-  value = -46.85 + 175.72 * rawTemperature / 65536.0;
-  
-  return value * 10.0;
-
+  /* two decimal places are returned from this function. */
+  return -4685l + (17572l * (long)rawTemperature) / 65536l;  
 }
 
 int HTU21D::getTemperatureAge()
 {
-  
   return millis() - temperatureTime;
-  
 }
 
 
 int HTU21D::getHumidity()
 {
-  double value = 0;
-  
-  value = -6.0 + 125.0 * rawHumidity / 65536.0;
-  
-  return value * 10.0;
-  
+  /* two decimal places are returned from this function. */
+  return -600l + (12500l * (long)rawHumidity) / 65536l;
 }  
 
 int HTU21D::getHumidityAge()
