@@ -30,8 +30,12 @@ HTU21D::HTU21D(Software_I2C* i2c_bus)
 
 }
 
+void HTU21D::begin()
+{
+  /* Nothing to do */
+}
 
-void HTU21D::readData()
+void HTU21D::run()
 {
   char error;
   unsigned char data[3];

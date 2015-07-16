@@ -22,7 +22,9 @@ class HTU21D
 {
 public:
   HTU21D(Software_I2C* i2c_bus);
-  void readData();
+  void begin();
+  void run();
+  
   int getTemperature();
   int getTemperatureAge();
   int getHumidity();
