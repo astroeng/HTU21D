@@ -26,7 +26,7 @@ HTU21D::HTU21D(Software_I2C* i2c_bus)
   temperatureTime = 0;
   humidityTime = 0;
   requestTime = 0;
-  readState = RequestTemperature;
+  readState = HTU21D_RequestTemperature;
 
 }
 
@@ -35,10 +35,11 @@ void HTU21D::begin()
   /* Nothing to do */
 }
 
-void HTU21D::run()
+HTU21DReadStateType HTU21D::run()
 {
   char error;
   unsigned char data[3];
+  char startingState = readState;
 
   
   /* This is the switch block that implements the functional activities for each
@@ -51,7 +52,7 @@ void HTU21D::run()
        is sent to the device. The time that the request was sent is saved for use in the
        state flow logic in the next switch block.
      */
-    case RequestTemperature:
+    case HTU21D_RequestTemperature:
       _i2c_bus->start_i2c();
       _i2c_bus->write(HTU21D_ADDRESS);
       _i2c_bus->write(START_TEMPERATURE_NOHOLD);
@@ -66,7 +67,7 @@ void HTU21D::run()
        low, crc). For the moment the crc is ignored.
        TODO: Implement crc functionality.
      */
-    case RetrieveTemperature:
+    case HTU21D_RetrieveTemperature:
       _i2c_bus->start_i2c();
       _i2c_bus->write(HTU21D_ADDRESS | 0x01);
       
@@ -84,7 +85,7 @@ void HTU21D::run()
     /* The request humidity state is pretty much the same as the request temperature 
        state excepth the command for humidity is sent.
      */
-    case RequestHumidity:
+    case HTU21D_RequestHumidity:
 
       _i2c_bus->start_i2c();
       _i2c_bus->write(HTU21D_ADDRESS);
@@ -99,7 +100,7 @@ void HTU21D::run()
        state except the bytes from the humidity command are returned.
        TODO: Implement CRC functions.
      */
-    case RetrieveHumidity:
+    case HTU21D_RetrieveHumidity:
       
       _i2c_bus->start_i2c();
       _i2c_bus->write(HTU21D_ADDRESS | 0x01);
@@ -126,30 +127,32 @@ void HTU21D::run()
   
   switch (readState) 
   {
-    case RequestTemperature:
-      readState = WaitTemperature;
+    case HTU21D_RequestTemperature:
+      readState = HTU21D_WaitTemperature;
       break;
-    case WaitTemperature:
+    case HTU21D_WaitTemperature:
       if (requestTime + SAMPLE_TIME < millis())
       {
-        readState = RetrieveTemperature;
+        readState = HTU21D_RetrieveTemperature;
       }
       break;
-    case RetrieveTemperature:
-      readState = RequestHumidity;
+    case HTU21D_RetrieveTemperature:
+      readState = HTU21D_RequestHumidity;
       break;
-    case RequestHumidity:
-      readState = WaitHumidity;
-    case WaitHumidity:
+    case HTU21D_RequestHumidity:
+      readState = HTU21D_WaitHumidity;
+    case HTU21D_WaitHumidity:
       if (requestTime + SAMPLE_TIME < millis())
       {
-        readState = RetrieveHumidity;
+        readState = HTU21D_RetrieveHumidity;
       }
       break;
-    case RetrieveHumidity:
-      readState = RequestTemperature;
+    case HTU21D_RetrieveHumidity:
+      readState = HTU21D_RequestTemperature;
       break;
   }
+  
+  return (HTU21DReadStateType)startingState;
 
 }
 

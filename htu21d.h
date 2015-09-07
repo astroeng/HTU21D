@@ -10,12 +10,12 @@
 
 typedef enum
 {
-  RequestTemperature,
-  WaitTemperature,
-  RetrieveTemperature,
-  RequestHumidity,
-  WaitHumidity,
-  RetrieveHumidity
+  HTU21D_RequestTemperature,
+  HTU21D_WaitTemperature,
+  HTU21D_RetrieveTemperature,
+  HTU21D_RequestHumidity,
+  HTU21D_WaitHumidity,
+  HTU21D_RetrieveHumidity
 } HTU21DReadStateType;
 
 class HTU21D
@@ -23,7 +23,7 @@ class HTU21D
 public:
   HTU21D(Software_I2C* i2c_bus);
   void begin();
-  void run();
+  HTU21DReadStateType run();
   
   int getTemperature();
   int getTemperatureAge();
