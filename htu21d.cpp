@@ -12,10 +12,12 @@
 #define START_HUMIDITY_AND_HOLD    0xE5
 #define START_TEMPERATURE_NOHOLD   0xF3
 #define START_HUMIDITY_NOHOLD      0xF5
-#define WRITE_USER_REG        0xE6
-#define READ_USER_REG         0xE7
-#define SOFT_RESET            0xFE
+#define WRITE_USER_REG             0xE6
+#define READ_USER_REG              0xE7
+#define SOFT_RESET                 0xFE
 
+//#define DEBUG(x) x
+#define DEBUG(x)
 
 HTU21D::HTU21D(Software_I2C* i2c_bus)
 {
@@ -68,6 +70,7 @@ HTU21DReadStateType HTU21D::run()
        TODO: Implement crc functionality.
      */
     case HTU21D_RetrieveTemperature:
+      
       _i2c_bus->start_i2c();
       _i2c_bus->write(HTU21D_ADDRESS | 0x01);
       
